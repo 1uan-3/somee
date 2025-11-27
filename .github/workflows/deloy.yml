@@ -1,0 +1,49 @@
+name: Deploy FE and BE
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js (Frontend)
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+
+    - name: Install Frontend dependencies
+      run: |
+        cd frontend
+        npm install
+
+    - name: Build Frontend
+      run: |
+        cd frontend
+        npm run build
+
+    - name: Deploy Frontend to Somee
+      run: |
+        cd frontend
+        rsync -avz ./build/ user@luan13.somee.com:/path/to/frontend/ # Cần thay thế bằng thông tin đúng
+
+    - name: Setup Python (Backend)
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+
+    - name: Install Backend dependencies
+      run: |
+        cd backend
+        pip install -r requirements.txt
+
+    - name: Deploy Backend to Somee
+      run: |
+        cd backend
+        rsync -avz ./ user@luan13.somee.com:/path/to/backend/ # Cần thay thế bằng thông tin đúng
