@@ -1,57 +1,26 @@
-name: Deploy FE and BE
+name: Deploy to Somee
 
 on:
   push:
     branches:
       - main
+      - master
+  workflow_dispatch:
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js (Frontend)
-      uses: actions/setup-node@v2
-      with:
-        node-version: '16'
-
-    - name: Install Frontend dependencies
-      run: |
-        cd frontend
-        npm install
-
-    - name: Build Frontend
-      run: |
-        cd frontend
-        npm run build
-
-    - name: Deploy Frontend to Somee (FTP)
-      uses: SamKirkland/FTP-Deploy-Action@v4.0.0
-      with:
-        ftp-server: ftp://luan13.somee.com/www.luan13.somee.com
-        ftp-username: ${{ secrets.FTP_USERNAME }}
-        ftp-password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./frontend/build
-        remote-dir: d:\DZHosts\LocalUser\luanduyyy3131\www.luan13.somee.com  # Thay thế bằng đường dẫn đúng trên hosting của bạn
-
-    - name: Setup Python (Backend)
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.9'
-
-    - name: Install Backend dependencies
-      run: |
-        cd backend
-        pip install -r requirements.txt
-
-    - name: Deploy Backend to Somee (FTP)
-      uses: SamKirkland/FTP-Deploy-Action@v4.0.0
-      with:
-        ftp-server: ftp://luan13.somee.com
-        ftp-username: ${{ secrets.FTP_USERNAME }}
-        ftp-password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./backend
-        remote-dir: /path/to/backend/  # Thay thế bằng đường dẫn đúng trên hosting của bạn
+      - name: Deploy to Somee via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: tuanvahoahh.somee.com
+          username: thanhhoa3
+          password: 123456q@
+          local-dir: ./
+          server-dir: /www.tuanvahoahh.somee.com/
+          dangerous-clean-slate: false
