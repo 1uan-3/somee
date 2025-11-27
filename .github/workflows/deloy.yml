@@ -35,7 +35,7 @@ jobs:
         ftp-username: ${{ secrets.FTP_USERNAME }}
         ftp-password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./frontend/build
-        remote-dir: /path/to/frontend/  # Thay thế bằng đường dẫn đúng trên hosting của bạn
+        remote-dir: d:\DZHosts\LocalUser\luanduyyy3131\www.luan13.somee.com  # Thay thế bằng đường dẫn đúng trên hosting của bạn
 
     - name: Setup Python (Backend)
       uses: actions/setup-python@v2
