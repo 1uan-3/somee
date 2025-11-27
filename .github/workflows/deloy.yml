@@ -28,10 +28,14 @@ jobs:
         cd frontend
         npm run build
 
-    - name: Deploy Frontend to Somee
-      run: |
-        cd frontend
-        rsync -avz ./build/ user@luan13.somee.com:/path/to/frontend/ # Cần thay thế bằng thông tin đúng
+    - name: Deploy Frontend to Somee (FTP)
+      uses: SamKirkland/FTP-Deploy-Action@v5
+      with:
+        ftp-server: ftp://luan13.somee.com/www.luan13.somee.com
+        ftp-username: ${{ secrets.FTP_USERNAME }}
+        ftp-password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./frontend/build
+        remote-dir: /path/to/frontend/  # Thay thế bằng đường dẫn đúng trên hosting của bạn
 
     - name: Setup Python (Backend)
       uses: actions/setup-python@v2
@@ -43,7 +47,11 @@ jobs:
         cd backend
         pip install -r requirements.txt
 
-    - name: Deploy Backend to Somee
-      run: |
-        cd backend
-        rsync -avz ./ user@luan13.somee.com:/path/to/backend/ # Cần thay thế bằng thông tin đúng
+    - name: Deploy Backend to Somee (FTP)
+      uses: SamKirkland/FTP-Deploy-Action@v5
+      with:
+        ftp-server: ftp://luan13.somee.com
+        ftp-username: ${{ secrets.FTP_USERNAME }}
+        ftp-password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./backend
+        remote-dir: /path/to/backend/  # Thay thế bằng đường dẫn đúng trên hosting của bạn
