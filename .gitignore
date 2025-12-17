@@ -1,6 +1,11 @@
-/data/*.sqlite
-/data/*.sqlite-*
-/data/*.db
-/data/*.db-*
-build-info.json
+bin/
+obj/
+.vs/
+publish/
 
+App_Data/*.sqlite
+App_Data/*.sqlite-*
+App_Data/*.db
+App_Data/*.db-*
+
+build-info.json

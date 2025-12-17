@@ -1,26 +1,27 @@
-# Todo App (HTML + PHP + SQLite) + CI/CD
+# Todo App (HTML + ASP.NET + SQLite) + CI/CD
 
-Repo này là một ví dụ đơn giản để phục vụ bài test Git/GitHub + CI/CD: khi push lên nhánh `main/master` thì GitHub Actions sẽ chạy lint/test và (nếu pass) tự động deploy qua FTP lên hosting.
+Repo này là một ví dụ đơn giản để phục vụ bài test Git/GitHub + CI/CD trên hosting Somee (IIS): khi push lên nhánh `main/master` thì GitHub Actions sẽ chạy build/smoke-test và (nếu pass) tự động publish + deploy qua FTP lên hosting.
 
 ## Chức năng
-- Giao diện HTML/JS (`index.html`) gọi API PHP (`api.php`)
-- Lưu dữ liệu vào SQLite (`data/app.sqlite`) bằng PDO
+- Giao diện HTML/JS ở `wwwroot/index.html` gọi API ASP.NET (`/api/*`)
+- Lưu dữ liệu vào SQLite (`App_Data/app.sqlite`)
 - CRUD cơ bản: xem danh sách, thêm task, tick hoàn thành, xoá
 
 ## Chạy local
-Yêu cầu máy có PHP 8.x.
+Yêu cầu máy có .NET SDK 6.x+.
 
 ```bash
-php -S 127.0.0.1:8000
+dotnet restore
+dotnet run
 ```
 
-Mở `http://127.0.0.1:8000/`.
+Mở URL hiển thị trong console (thường là `http://localhost:5000/` hoặc `https://localhost:5001/`).
 
 ## API endpoints
-- `GET api.php?action=list`
-- `POST api.php?action=add` với form field `title`
-- `POST api.php?action=toggle` với `id`, `is_done` (0/1)
-- `POST api.php?action=delete` với `id`
+- `GET /api/tasks`
+- `POST /api/tasks` (JSON) `{ "title": "..." }`
+- `POST /api/tasks/{id}/toggle` (JSON) `{ "is_done": true }`
+- `DELETE /api/tasks/{id}`
 
 ## CI/CD GitHub Actions
 Workflow: `.github/workflows/deploy.yml`
@@ -33,10 +34,9 @@ Vào **Repo → Settings → Secrets and variables → Actions → New repositor
 - `FTP_SERVER_DIR` (vd: `/www.luan13.somee.com/`)
 
 ### 2) Luồng chạy
-- Push lên `main/master` → job `ci` chạy `php -l` + `php tests/smoke.php`
-- Nếu CI pass → job `deploy` tạo `build-info.json` và deploy qua FTP
+- Push lên `main/master` → job `ci` chạy `dotnet build` + smoke test `/api/health`
+- Nếu CI pass → job `deploy` chạy `dotnet publish` → tạo `publish/build-info.json` → deploy qua FTP
 
 ## Lưu ý hosting
-- SQLite file được tạo ở `data/app.sqlite` → thư mục `data/` cần quyền ghi.
-- Repo có sẵn `data/web.config` và `data/.htaccess` để hạn chế tải trực tiếp file database.
-
+- Somee không chạy PHP, nên backend dùng ASP.NET để hoạt động trên IIS.
+- SQLite file được tạo ở `App_Data/app.sqlite` → thư mục `App_Data/` cần quyền ghi (thường OK trên hosting).
