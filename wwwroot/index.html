@@ -3,366 +3,228 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todo App (ASP.NET + SQLite)</title>
+    <title>B�i ki?m tra - DH52201038</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0b1220;
-            --card: rgba(255, 255, 255, 0.06);
-            --card-border: rgba(255, 255, 255, 0.10);
-            --text: rgba(255, 255, 255, 0.92);
-            --muted: rgba(255, 255, 255, 0.65);
-            --accent: #60a5fa;
-            --danger: #fb7185;
-            --success: #34d399;
-            --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+            --bg: #f6f1e9;
+            --ink: #231912;
+            --muted: #6f6156;
+            --accent: #0f766e;
+            --accent-strong: #0b4f4a;
+            --card: #fffaf3;
+            --stroke: #e6d6c3;
+            --shadow: 0 28px 70px rgba(35, 25, 18, 0.16);
         }
 
         * { box-sizing: border-box; }
+
         body {
             margin: 0;
-            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-            color: var(--text);
+            font-family: "Source Sans 3", "Noto Sans", sans-serif;
+            color: var(--ink);
             background:
-                radial-gradient(1200px 800px at 10% 10%, rgba(96, 165, 250, 0.18), transparent 60%),
-                radial-gradient(900px 700px at 90% 15%, rgba(52, 211, 153, 0.12), transparent 55%),
-                radial-gradient(900px 700px at 40% 90%, rgba(251, 113, 133, 0.10), transparent 55%),
-                var(--bg);
+                radial-gradient(1100px 700px at 8% -5%, rgba(15, 118, 110, 0.20), transparent 58%),
+                radial-gradient(900px 620px at 100% 18%, rgba(180, 83, 9, 0.18), transparent 55%),
+                linear-gradient(180deg, #faf6ef, #f1e7da 65%, #f6f1e9);
             min-height: 100vh;
-            padding: 36px 16px;
+            padding: 56px 18px 80px;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        .container { max-width: 860px; margin: 0 auto; }
-        .header {
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            gap: 12px;
-            margin-bottom: 18px;
+        body::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle at 1px 1px, rgba(35, 25, 18, 0.06) 1px, transparent 0);
+            background-size: 28px 28px;
+            opacity: 0.32;
+            pointer-events: none;
         }
-        .title { margin: 0; font-size: 28px; line-height: 1.15; letter-spacing: -0.02em; }
-        .subtitle { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
-        .badge {
+
+        body::after {
+            content: "";
+            position: absolute;
+            width: 520px;
+            height: 520px;
+            border-radius: 40% 60% 55% 45%;
+            background: radial-gradient(circle at 30% 30%, rgba(15, 118, 110, 0.25), transparent 65%);
+            top: -180px;
+            right: -140px;
+            transform: rotate(12deg);
+            opacity: 0.8;
+            pointer-events: none;
+        }
+
+        .page {
+            max-width: 980px;
+            margin: 0 auto;
+            display: grid;
+            gap: 28px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero {
+            display: grid;
+            gap: 12px;
+            padding: 10px 0;
+            animation: rise 0.8s ease-out both;
+        }
+
+        .eyebrow {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 10px 12px;
-            border: 1px solid var(--card-border);
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 14px;
-            color: var(--muted);
-            font-size: 12px;
-            white-space: nowrap;
+            font-size: 13px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--accent-strong);
+            margin: 0;
         }
-        .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--success); box-shadow: 0 0 0 5px rgba(52, 211, 153, 0.10); }
+
+        h1 {
+            margin: 0;
+            font-family: "Playfair Display", "Times New Roman", serif;
+            font-size: clamp(32px, 5vw, 52px);
+            line-height: 1.05;
+            letter-spacing: -0.02em;
+        }
+
+        .lead {
+            margin: 0;
+            color: var(--muted);
+            font-size: 18px;
+            max-width: 620px;
+        }
+
+        .tag-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        .tag {
+            padding: 8px 14px;
+            border-radius: 999px;
+            border: 1px solid var(--stroke);
+            background: rgba(255, 255, 255, 0.72);
+            font-size: 13px;
+            color: var(--accent-strong);
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
 
         .card {
             background: var(--card);
-            border: 1px solid var(--card-border);
-            border-radius: 18px;
-            padding: 18px;
+            border: 1px solid var(--stroke);
+            border-radius: 24px;
+            padding: 24px;
             box-shadow: var(--shadow);
-        }
-
-        .row { display: flex; gap: 10px; align-items: center; }
-        .row + .row { margin-top: 12px; }
-
-        input[type="text"]{
-            flex: 1;
-            padding: 12px 14px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.14);
-            background: rgba(0,0,0,0.20);
-            color: var(--text);
-            outline: none;
-        }
-        input[type="text"]::placeholder { color: rgba(255, 255, 255, 0.45); }
-        input[type="text"]:focus { border-color: rgba(96, 165, 250, 0.55); box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.12); }
-
-        button {
-            padding: 12px 14px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.14);
-            background: rgba(255, 255, 255, 0.06);
-            color: var(--text);
-            cursor: pointer;
-        }
-        button:hover { border-color: rgba(96, 165, 250, 0.55); }
-        button.primary { background: rgba(96, 165, 250, 0.22); border-color: rgba(96, 165, 250, 0.40); }
-        button.danger { background: rgba(251, 113, 133, 0.16); border-color: rgba(251, 113, 133, 0.35); }
-        button:disabled { opacity: 0.55; cursor: not-allowed; }
-
-        .meta {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 8px;
-            color: var(--muted);
-            font-size: 13px;
-        }
-
-        .list { margin-top: 14px; padding: 0; list-style: none; }
-        .item {
             display: grid;
-            grid-template-columns: 22px 1fr auto;
-            gap: 10px;
-            align-items: center;
-            padding: 12px 12px;
-            border-radius: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.10);
-            background: rgba(0, 0, 0, 0.18);
+            gap: 18px;
+            animation: rise 0.9s ease-out both;
+            animation-delay: 0.1s;
         }
-        .item + .item { margin-top: 10px; }
-        .item label { cursor: pointer; }
-        .item .titleText { display: block; font-size: 15px; }
-        .item .time { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; }
-        .item.done .titleText { text-decoration: line-through; color: rgba(255, 255, 255, 0.55); }
-        .item .actions { display: flex; gap: 8px; }
 
-        .msg {
-            margin-top: 12px;
-            padding: 10px 12px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.10);
-            background: rgba(0, 0, 0, 0.18);
+        .card h2 {
+            margin: 0;
+            font-size: 20px;
+            letter-spacing: -0.01em;
+        }
+
+        .card p {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .panel {
+            padding: 16px;
+            border-radius: 18px;
+            border: 1px solid rgba(15, 118, 110, 0.18);
+            background: linear-gradient(140deg, rgba(15, 118, 110, 0.10), transparent 65%);
+        }
+
+        .panel h3 {
+            margin: 0 0 8px;
+            font-size: 16px;
+        }
+
+        .panel ul {
+            margin: 0;
+            padding-left: 18px;
+            color: var(--muted);
+        }
+
+        .panel li { margin: 6px 0; }
+
+        .footer {
+            text-align: center;
             color: var(--muted);
             font-size: 13px;
-            display: none;
+            padding-top: 10px;
         }
-        .msg.show { display: block; }
-        .msg.error { border-color: rgba(251, 113, 133, 0.35); color: rgba(255, 255, 255, 0.82); }
 
-        footer { margin-top: 16px; color: rgba(255, 255, 255, 0.45); font-size: 12px; text-align: center; }
-        a { color: var(--accent); text-decoration: none; }
-        a:hover { text-decoration: underline; }
-
-        .note {
-            margin-bottom: 14px;
-            padding: 12px 12px;
-            border-radius: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.10);
-            background: rgba(0, 0, 0, 0.18);
+        @keyframes rise {
+            from { opacity: 0; transform: translateY(18px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .note h2 { margin: 0 0 8px; font-size: 16px; }
-        .note ul { margin: 0; padding-left: 18px; color: var(--muted); }
-        .note li { margin: 6px 0; }
+
+        @media (max-width: 720px) {
+            .grid { grid-template-columns: 1fr; }
+            body { padding: 42px 16px 64px; }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
+    <main class="page">
+        <header class="hero">
+            <p class="eyebrow">THMNM � Trang t?nh</p>
+            <h1>B�i ki?m tra - DH52201038</h1>
+            <p class="lead">Trang t?nh HTML/CSS s?n s�ng �? tri?n khai l�n hosting somee.</p>
+            <div class="tag-row">
+                <span class="tag">HTML</span>
+                <span class="tag">CSS</span>
+                <span class="tag">Static Page</span>
+            </div>
+        </header>
+
+        <section class="card">
             <div>
-                <h1 class="title">Todo App</h1>
-                <p class="subtitle">Frontend: HTML/JS • Backend: ASP.NET • Database: SQLite</p>
+                <h2>Th�ng tin tri?n khai</h2>
+                <p>Trang ��?c t?i gi?n �? upload tr?c ti?p, kh�ng c?n script hay backend.</p>
             </div>
-            <div class="badge" title="Trạng thái kết nối API">
-                <span id="statusDot" class="dot" style="background:#fbbf24; box-shadow: 0 0 0 5px rgba(251, 191, 36, 0.12)"></span>
-                <span id="statusText">Đang tải…</span>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="note">
-                <h2>Kết quả test (demo)</h2>
-                <ul>
-                    <li>Git/GitHub: các lệnh cơ bản (tạo repo, phân nhánh, gộp, ...)</li>
-                    <li>CI/CD: kết hợp Git/GitHub</li>
-                    <li>Local thay đổi → commit/push lên remote → GitHub Actions tự lint/test → build & deploy lên web (domain cập nhật theo nhánh main)</li>
-                </ul>
-            </div>
-
-            <form id="addForm" class="row" autocomplete="off">
-                <input id="titleInput" type="text" name="title" placeholder="Nhập việc cần làm (ví dụ: Làm bài THMNM)..." maxlength="200" required />
-                <button id="addBtn" class="primary" type="submit">Thêm</button>
-            </form>
-
-            <div class="row meta">
-                <div><span id="countText">0</span> task</div>
-                <div>
-                    <button id="refreshBtn" type="button">Tải lại</button>
-                    <button id="clearMsgBtn" type="button" style="display:none;">Ẩn thông báo</button>
+            <div class="grid">
+                <div class="panel">
+                    <h3>N?i dung</h3>
+                    <ul>
+                        <li>Lo?i trang: t?nh (static).</li>
+                        <li>M?c ti�u: b�i ki?m tra THMNM.</li>
+                        <li>�i?m nh?n: ti�u �? theo y�u c?u.</li>
+                    </ul>
+                </div>
+                <div class="panel">
+                    <h3>G?i ?</h3>
+                    <ul>
+                        <li>�?m b?o file ch�nh l� index.html.</li>
+                        <li>Upload th� m?c wwwroot l�n hosting.</li>
+                        <li>Truy c?p domain �? ki?m tra hi?n th?.</li>
+                    </ul>
                 </div>
             </div>
+        </section>
 
-            <div id="msg" class="msg"></div>
-            <ul id="list" class="list"></ul>
-        </div>
-
-        <footer>
-            Push lên nhánh <code>main</code> → GitHub Actions chạy build/smoke test → deploy FTP lên hosting.
-        </footer>
-    </div>
-
-    <script>
-        const elList = document.getElementById('list');
-        const elMsg = document.getElementById('msg');
-        const elCount = document.getElementById('countText');
-        const elStatusDot = document.getElementById('statusDot');
-        const elStatusText = document.getElementById('statusText');
-        const elClearMsgBtn = document.getElementById('clearMsgBtn');
-
-        function escapeHtml(value) {
-            return String(value)
-                .replaceAll('&', '&amp;')
-                .replaceAll('<', '&lt;')
-                .replaceAll('>', '&gt;')
-                .replaceAll('"', '&quot;')
-                .replaceAll("'", '&#039;');
-        }
-
-        function showMessage(text, isError = false) {
-            elMsg.textContent = text;
-            elMsg.classList.toggle('error', isError);
-            elMsg.classList.add('show');
-            elClearMsgBtn.style.display = 'inline-block';
-        }
-
-        function clearMessage() {
-            elMsg.textContent = '';
-            elMsg.classList.remove('show', 'error');
-            elClearMsgBtn.style.display = 'none';
-        }
-
-        async function apiList() {
-            const res = await fetch('/api/tasks', { cache: 'no-store' });
-            const data = await res.json();
-            if (!res.ok || !data.ok) throw new Error(data.error || 'Không thể tải danh sách.');
-            return data.tasks;
-        }
-
-        async function apiAdd(title) {
-            const res = await fetch('/api/tasks', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-                body: JSON.stringify({ title })
-            });
-            const data = await res.json();
-            if (!res.ok || !data.ok) throw new Error(data.error || 'Không thể thêm task.');
-            return data.task;
-        }
-
-        async function apiToggle(id, isDone) {
-            const res = await fetch(`/api/tasks/${id}/toggle`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-                body: JSON.stringify({ is_done: Boolean(isDone) })
-            });
-            const data = await res.json();
-            if (!res.ok || !data.ok) throw new Error(data.error || 'Không thể cập nhật task.');
-        }
-
-        async function apiDelete(id) {
-            const res = await fetch(`/api/tasks/${id}`, { method: 'DELETE' });
-            const data = await res.json();
-            if (!res.ok || !data.ok) throw new Error(data.error || 'Không thể xoá task.');
-        }
-
-        function formatTime(sqliteText) {
-            // sqlite datetime('now') => "YYYY-MM-DD HH:mm:ss"
-            const d = new Date(String(sqliteText).replace(' ', 'T') + 'Z');
-            if (Number.isNaN(d.getTime())) return sqliteText;
-            return d.toLocaleString('vi-VN');
-        }
-
-        function render(tasks) {
-            elCount.textContent = String(tasks.length);
-            elList.innerHTML = tasks.map(t => {
-                const done = Boolean(t.is_done);
-                return `
-                    <li class="item ${done ? 'done' : ''}" data-id="${escapeHtml(t.id)}">
-                        <input class="toggle" type="checkbox" ${done ? 'checked' : ''} aria-label="Đánh dấu hoàn thành" />
-                        <div>
-                            <span class="titleText">${escapeHtml(t.title)}</span>
-                            <span class="time">${escapeHtml(formatTime(t.created_at))}</span>
-                        </div>
-                        <div class="actions">
-                            <button class="danger delete" type="button">Xoá</button>
-                        </div>
-                    </li>
-                `;
-            }).join('');
-        }
-
-        async function refresh() {
-            elStatusText.textContent = 'Đang kết nối…';
-            elStatusDot.style.background = '#fbbf24';
-            elStatusDot.style.boxShadow = '0 0 0 5px rgba(251, 191, 36, 0.12)';
-            try {
-                const tasks = await apiList();
-                render(tasks);
-                elStatusText.textContent = 'API OK';
-                elStatusDot.style.background = '#34d399';
-                elStatusDot.style.boxShadow = '0 0 0 5px rgba(52, 211, 153, 0.10)';
-            } catch (e) {
-                elStatusText.textContent = 'API lỗi';
-                elStatusDot.style.background = '#fb7185';
-                elStatusDot.style.boxShadow = '0 0 0 5px rgba(251, 113, 133, 0.10)';
-                showMessage(e.message || String(e), true);
-            }
-        }
-
-        document.getElementById('addForm').addEventListener('submit', async (ev) => {
-            ev.preventDefault();
-            clearMessage();
-            const input = document.getElementById('titleInput');
-            const title = input.value.trim();
-            if (!title) return;
-
-            const btn = document.getElementById('addBtn');
-            btn.disabled = true;
-            try {
-                await apiAdd(title);
-                input.value = '';
-                await refresh();
-            } catch (e) {
-                showMessage(e.message || String(e), true);
-            } finally {
-                btn.disabled = false;
-            }
-        });
-
-        document.getElementById('refreshBtn').addEventListener('click', () => {
-            clearMessage();
-            refresh();
-        });
-
-        elClearMsgBtn.addEventListener('click', clearMessage);
-
-        elList.addEventListener('click', async (ev) => {
-            const li = ev.target.closest('.item');
-            if (!li) return;
-            const id = Number(li.dataset.id);
-            if (!Number.isFinite(id)) return;
-
-            try {
-                if (ev.target.classList.contains('delete')) {
-                    clearMessage();
-                    await apiDelete(id);
-                    await refresh();
-                }
-            } catch (e) {
-                showMessage(e.message || String(e), true);
-            }
-        });
-
-        elList.addEventListener('change', async (ev) => {
-            const li = ev.target.closest('.item');
-            if (!li) return;
-            const id = Number(li.dataset.id);
-            if (!Number.isFinite(id)) return;
-            if (!ev.target.classList.contains('toggle')) return;
-
-            try {
-                clearMessage();
-                await apiToggle(id, ev.target.checked);
-                li.classList.toggle('done', ev.target.checked);
-            } catch (e) {
-                showMessage(e.message || String(e), true);
-                ev.target.checked = !ev.target.checked;
-            }
-        });
-
-        refresh();
-    </script>
+        <div class="footer">DH52201038 � Trang t?nh HTML/CSS</div>
+    </main>
 </body>
 </html>
-
